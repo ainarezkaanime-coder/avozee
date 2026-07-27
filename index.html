@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="ru"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>avoze | доступ к контенту</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --violet:#8b5cf6;
+            --violet-deep:#5b21b6;
+            --glow:#c9a7ff;
+            --gold:#d9b365;
+            --gold-bright:#f0d38a;
+            --txt:#ece6f7;
+            --muted:#8a7aa8;
+            --dim:#4a3d68;
+            --dark:#050308;
+        }
+        html,body{min-height:100vh;overflow-x:hidden;}
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:
+                radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139,92,246,.20), transparent 60%),
+                radial-gradient(ellipse 700px 500px at 110% 10%, rgba(217,179,101,.10), transparent 55%),
+                #05030a;
+            display:flex;align-items:center;justify-content:center;
+            padding:28px 16px 52px;position:relative;
+        }
+        #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+        .orb{position:fixed;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;z-index:0;}
+        .orb1{width:340px;height:340px;background:radial-gradient(circle,var(--violet),transparent 70%);top:-8%;left:-10%;animation:drift1 14s ease-in-out infinite;}
+        .orb2{width:260px;height:260px;background:radial-gradient(circle,var(--gold),transparent 70%);bottom:-6%;right:-8%;animation:drift2 17s ease-in-out infinite;}
+        @keyframes drift1{0%,100%{transform:translate(0,0);}50%{transform:translate(40px,30px);}}
+        @keyframes drift2{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,-24px);}}
+
+        .card{
+            position:relative;z-index:10;max-width:450px;width:100%;
+            background:linear-gradient(160deg,rgba(24,14,40,.97) 0%,rgba(8,5,15,.99) 100%);
+            border-radius:34px;padding:38px 24px 30px;
+            border:1px solid rgba(139,92,246,.28);
+            box-shadow:
+                0 0 0 1px rgba(201,167,255,.06),
+                0 50px 120px rgba(0,0,0,.85),
+                0 0 90px rgba(139,92,246,.10),
+                inset 0 1px 0 rgba(201,167,255,.16),
+                inset 0 -1px 0 rgba(0,0,0,.6);
+            animation:cardIn 1s cubic-bezier(.16,1,.3,1) both;
+        }
+        @keyframes cardIn{from{opacity:0;transform:translateY(44px) scale(.96);}to{opacity:1;transform:none;}}
+        .card::before{
+            content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;
+            background:linear-gradient(90deg,transparent,var(--gold-bright),var(--glow),transparent);
+            border-radius:99px;animation:shimmer 4s ease-in-out infinite;
+        }
+        @keyframes shimmer{0%,100%{opacity:.3;left:35%;right:35%;}50%{opacity:1;left:8%;right:8%;}}
+        .card::after{
+            content:'';position:absolute;inset:0;border-radius:34px;pointer-events:none;
+            background:
+                linear-gradient(135deg, rgba(217,179,101,.10), transparent 30%),
+                linear-gradient(-45deg, rgba(139,92,246,.10), transparent 30%);
+        }
+
+        .logo{text-align:center;margin-bottom:8px;position:relative;}
+        .logo h1{
+            font-family:'Playfair Display',serif;font-size:66px;font-weight:900;
+            background:linear-gradient(160deg,#fff6e0 0%,#f0d38a 28%,#c9a7ff 62%,#8b5cf6 100%);
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+            letter-spacing:7px;line-height:1;animation:logoGlow 5s ease-in-out infinite;
+        }
+        @keyframes logoGlow{0%,100%{filter:drop-shadow(0 0 16px rgba(139,92,246,.30));}50%{filter:drop-shadow(0 0 42px rgba(217,179,101,.45));}}
+        .sub{color:var(--muted);font-size:14px;font-weight:500;margin-top:10px;letter-spacing:.8px;}
+
+        .top-image{width:100%;height:190px;object-fit:cover;object-position:center 20%;border-radius:20px;margin-bottom:20px;border:1px solid rgba(139,92,246,.35);}
+        .photo-caption{text-align:center;margin-top:8px;font-size:13px;font-weight:600;color:var(--gold-bright);letter-spacing:0.5px;}
+
+        .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.45),transparent);margin:24px 0;position:relative;}
+        .section-label{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--dim);text-transform:uppercase;text-align:center;margin-bottom:16px;}
+
+        .tariff-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+        .tariff-card{
+            background:rgba(255,255,255,.028);border-radius:22px;padding:18px 18px 16px;
+            border:1px solid rgba(139,92,246,.14);position:relative;overflow:hidden;
+            transition:all .4s cubic-bezier(.4,0,.2,1);
+        }
+        .tariff-card:hover{
+            border-color:rgba(139,92,246,.55);background:rgba(139,92,246,.08);
+            box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(139,92,246,.12);
+            transform:translateY(-4px);
+        }
+        .tariff-card.premium{
+            border:2px solid var(--gold);
+            background:linear-gradient(135deg, rgba(217,179,101,.16), rgba(139,92,246,.06));
+        }
+        .tariff-card.premium .tariff-price{color:var(--gold-bright);text-shadow:0 0 20px rgba(217,179,101,.6);}
+        .badge{
+            display:inline-block;background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+            color:#1a1024;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+            padding:4px 14px;border-radius:99px;margin-bottom:10px;
+        }
+        .tariff-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+        .tariff-name{font-weight:700;font-size:20px;color:var(--txt);}
+        .tariff-price{font-family:'Playfair Display',serif;font-weight:700;font-size:26px;color:var(--glow);text-shadow:0 0 20px rgba(139,92,246,.5);}
+        .tariff-desc{font-size:13px;color:var(--dim);margin-bottom:12px;}
+        .benefits{background:rgba(0,0,0,.3);border-radius:16px;padding:12px;margin:12px 0;font-size:12px;}
+        .benefits p{margin:6px 0;display:flex;align-items:center;gap:8px;color:#b6a6d6;}
+        .benefits p:before{content:'◆';font-size:10px;color:var(--gold-bright);}
+
+        .btn-pay{
+            display:block;width:100%;padding:13px;border-radius:14px;
+            border:1px solid rgba(139,92,246,.35);
+            background:linear-gradient(135deg,rgba(139,92,246,.20),rgba(139,92,246,.07));
+            font-weight:700;font-size:14px;color:var(--glow);text-align:center;text-decoration:none;
+            transition:all .3s ease;
+        }
+        .btn-pay:hover{background:linear-gradient(135deg,#8b5cf6,#5b21b6);color:#fff;box-shadow:0 4px 24px rgba(139,92,246,.5);}
+
+        .btn-channel{
+            display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;
+            border-radius:16px;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(139,92,246,.04));
+            border:1px solid rgba(139,92,246,.30);font-weight:700;font-size:15px;color:var(--glow);
+            text-decoration:none;margin-bottom:22px;transition:all .25s ease;
+        }
+        .btn-channel:hover{background:linear-gradient(135deg,rgba(139,92,246,.26),rgba(139,92,246,.1));border-color:rgba(139,92,246,.6);transform:translateY(-2px);}
+
+        .free-pack-btn {
+            display: block;
+            width: 100%;
+            margin: 18px 0 24px;
+            padding: 18px 20px 16px;
+            background: linear-gradient(145deg, #1c1030, #0e0620);
+            border: 3.5px solid var(--gold);
+            border-radius: 9999px;
+            color: #fff;
+            font-weight: 900;
+            font-size: 21px;
+            line-height: 1.1;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 12px 35px rgba(217, 179, 101, 0.3),
+                        0 4px 12px rgba(0,0,0,0.35),
+                        inset 0 2px 0 rgba(255,255,255,0.2);
+            transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .free-pack-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+            transform: translateX(-180%);
+            transition: transform 0.6s;
+        }
+        .free-pack-btn:hover::before {
+            transform: translateX(280%);
+        }
+        .free-pack-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(217, 179, 101, 0.4);
+        }
+        .free-pack-btn .gift {
+            font-size: 30px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .footer{text-align:center;font-size:12px;font-weight:500;color:var(--dim);padding-top:18px;border-top:1px solid rgba(139,92,246,.10);}
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);z-index:1000;justify-content:center;align-items:center;}
+        .modal-overlay.active{display:flex;}
+        .modal{background:linear-gradient(145deg,#1a0f2b,#08050f);border-radius:34px;padding:30px 24px;max-width:400px;width:100%;border:1px solid rgba(139,92,246,.35);box-shadow:0 0 60px rgba(139,92,246,.18);position:relative;animation:modalIn .3s ease-out;margin:20px;}
+        @keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+        .modal::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);border-radius:99px;}
+        .modal-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,#f0d38a,#8b5cf6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 30px rgba(139,92,246,.3);}
+        .modal-sub{text-align:center;color:#9a8ab8;font-size:14px;margin-bottom:24px;letter-spacing:.3px;}
+        .modal-option{display:block;width:100%;padding:16px;border-radius:16px;border:1px solid rgba(139,92,246,.2);background:rgba(255,255,255,.03);color:var(--txt);font-weight:600;font-size:16px;text-align:center;text-decoration:none;transition:all .3s ease;margin-bottom:12px;cursor:pointer;}
+        .modal-option:hover{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.6);transform:translateY(-2px);box-shadow:0 8px 25px rgba(139,92,246,.15);}
+        .modal-option .badge{display:inline-block;background:rgba(217,179,101,.2);border-radius:99px;padding:2px 12px;font-size:11px;font-weight:600;color:var(--gold-bright);margin-left:8px;}
+        .modal-close{display:block;width:100%;padding:12px;border-radius:16px;border:1px solid rgba(255,68,68,.2);background:transparent;color:#7a6a92;font-weight:500;font-size:14px;text-align:center;transition:all .3s ease;margin-top:8px;cursor:pointer;}
+        .modal-close:hover{border-color:rgba(255,68,68,.4);color:#ff8888;}
+        .modal-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.25),transparent);margin:16px 0;}
+        @media (max-width:480px){.card{padding:32px 18px 26px;border-radius:28px;}.logo h1{font-size:58px;letter-spacing:5px;}.top-image{height:170px;}.tariff-price{font-size:24px;}.tariff-name{font-size:18px;}.modal{padding:24px 18px;}.modal-title{font-size:24px;}}
+    </style>
+</head>
+<body>
+<canvas id="bgCanvas" width="1920" height="1080"></canvas>
+<div class="card">
+    <div class="logo"><h1>avoze</h1><div class="sub">доступ к контенту</div></div>
+    <div style="margin-bottom:20px;"><img src="images/photo.jpg" class="top-image" alt="Контент"><div class="photo-caption">📁 1 ТБ реального контента</div></div>
+    <div class="reviews-box" style="background:rgba(0,0,0,.3);border-radius:16px;padding:16px 20px;margin:16px 0 20px;border:1px solid rgba(78,255,154,.15);display:flex;flex-direction:column;align-items:center;text-align:center;transition:all .3s ease;">
+        <div style="font-size:18px;font-weight:700;color:#dff0e8;margin-bottom:2px;">Доказательства выдачи паков</div>
+        <div style="font-size:13px;color:#8aac96;margin-bottom:12px;">Скриншоты оплат, вопросы и ответы</div>
+        <a href="https://t.me/+SMQ61lAQhh0yODEy" style="display:inline-block;padding:8px 24px;border-radius:40px;background:linear-gradient(135deg,#1a4d2e,#2dbd6e);border:1px solid rgba(78,255,154,.3);color:#fff;font-weight:600;font-size:14px;text-decoration:none;transition:all .3s ease;" target="_blank">Открыть канал с отзывами</a>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">✦ выберите пакет ✦</div>
+    <div class="tariff-list">
+        <div class="tariff-card premium">
+            <div class="badge">🔥 ЛУЧШИЙ ВЫБОР</div>
+            <div class="tariff-row"><span class="tariff-name">👑 Премиум пак</span><span class="tariff-price">950 ★</span></div>
+            <div class="tariff-desc">1 ТБ • полный доступ</div>
+            <div class="benefits">
+                <p>Более 30.000 видеоматериалов по тематике</p>
+                <p>Доступ НАВСЕГДА к архиву и закрытому тгк</p>
+                <p>Частое пополнение контента новыми видео</p>
+                <p>Возможность сохранять контент себе</p>
+            </div>
+            <button class="btn-pay" data-stars="950">⭐ Оплатить звёздами</button>
+        </div>
+        <div class="tariff-card">
+            <div class="badge">🔥 ПОПУЛЯРНЫЙ</div>
+            <div class="tariff-row"><span class="tariff-name">🔥 Полный пак</span><span class="tariff-price">600 ★</span></div>
+            <div class="tariff-desc">50 ГБ • полный архив</div>
+            <div class="benefits">
+                <p>Более 9.000 видеоматериалов по тематике</p>
+                <p>Доступ НАВСЕГДА к архиву и закрытому тгк</p>
+                <p>Частое пополнение контента новыми видео</p>
+                <p>Возможность сохранять контент себе</p>
+            </div>
+            <button class="btn-pay" data-stars="600">⭐ Оплатить звёздами</button>
+        </div>
+        <div class="tariff-card">
+            <div class="tariff-row"><span class="tariff-name">📁 Средний пак</span><span class="tariff-price">450 ★</span></div>
+            <div class="tariff-desc">15 ГБ • оптимальный выбор</div>
+            <div class="benefits">
+                <p>Более 4.000 видеоматериалов по тематике</p>
+                <p>Доступ НАВСЕГДА к архиву и закрытому тгк</p>
+                <p>Частое пополнение контента новыми видео</p>
+                <p>Возможность сохранять контент себе</p>
+            </div>
+            <button class="btn-pay" data-stars="450">⭐ Оплатить звёздами</button>
+        </div>
+        <div class="tariff-card">
+            <div class="tariff-row"><span class="tariff-name">📦 Маленький пак</span><span class="tariff-price">350 ★</span></div>
+            <div class="tariff-desc">5 ГБ • стартовый набор</div>
+            <div class="benefits">
+                <p>Более 2.000 видеоматериалов по тематике</p>
+                <p>Доступ НАВСЕГДА к архиву и закрытому тгк</p>
+                <p>Частое пополнение контента новыми видео</p>
+                <p>Возможность сохранять контент себе</p>
+            </div>
+            <button class="btn-pay" data-stars="350">⭐ Оплатить звёздами</button>
+        </div>
+    </div>
+    
+    <a href="https://t.me/+w0BddXV6MdgxYWUy" class="btn-channel">🌿 Наш канал</a>
+    
+    <!-- Кнопка бесплатного пака (новая ссылка) -->
+    <a href="https://t.me/+-iYHV-B6izIzZDIy" class="free-pack-btn" target="_blank">
+        <span class="gift">🎁</span>
+        Бесплатный пак 5 ГБ
+    </a>
+
+    <div class="footer">🍼 После оплаты вы автоматически получите доступ к архиву</div>
+</div>
+
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+        <div class="modal-title">🌿 Выберите способ оплаты</div>
+        <div class="modal-sub">Выберите удобный способ оплаты, чтобы продолжить оформление заказа.</div>
+        <a href="#" id="cryptoLink" class="modal-option" target="_blank">💎 Криптовалюта <span class="badge">Комиссия 3%</span></a>
+        <a href="#" id="starsLink" class="modal-option" target="_blank">⭐ Telegram Stars <span class="badge">Комиссия 7%</span></a>
+        <div class="modal-divider"></div>
+        <button class="modal-close" id="closeModal">Закрыть</button>
+    </div>
+</div>
+
+<script>
+const modal=document.getElementById('paymentModal'),cryptoLink=document.getElementById('cryptoLink'),starsLink=document.getElementById('starsLink'),closeModalBtn=document.getElementById('closeModal');
+const starsLinks={350:'https://t.me/$CcKZA7zTOEvBEwAAylljqmr_mmQ',450:'https://t.me/$4mkI6LzTOEvCEwAATabLl789zWw',600:'https://t.me/$4Lbkc7zTOEvDEwAAas34LW4qQdA',950:'https://t.me/$-Wg0RLzTOEvEEwAAXUP0aCuOopk'};
+const cryptoLinks={350:'http://t.me/send?start=IVx01aM2XtjX',450:'http://t.me/send?start=IVsfdX2nne11',600:'http://t.me/send?start=IVK70foPGLAv',950:'http://t.me/send?start=IVys4dSwNfcm'};
+let selectedStars=0;
+document.querySelectorAll('.btn-pay').forEach(btn=>{btn.addEventListener('click',function(e){e.preventDefault();selectedStars=parseInt(this.getAttribute('data-stars'));cryptoLink.href=cryptoLinks[selectedStars]||'#';starsLink.href=starsLinks[selectedStars]||'#';modal.classList.add('active');});});
+closeModalBtn.addEventListener('click',function(){modal.classList.remove('active');});
+modal.addEventListener('click',function(e){if(e.target===modal)modal.classList.remove('active');});
+const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const fireflies=[],numFireflies=45,leaves=[],numLeaves=20,orbs=[];
+for(let i=0;i<numFireflies;i++){fireflies.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+.8,vx:(Math.random()-.5)*.4,vy:-(Math.random()*.5+.15),age:Math.random()*400,maxLife:Math.random()*220+130,hue:280+Math.random()*30});}
+for(let i=0;i<numLeaves;i++){leaves.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,size:Math.random()*16+6,rot:Math.random()*Math.PI*2,rotSpeed:(Math.random()-.5)*.025,vx:(Math.random()-.5)*.7,vy:Math.random()*.55+.25,alpha:Math.random()*.55+.18,swing:Math.random()*Math.PI*2,swingSpeed:Math.random()*.018+.004});}
+for(let i=0;i<6;i++){orbs.push({x:(i/5)*canvas.width+Math.random()*180-90,y:canvas.height*(.4+Math.random()*.6),r:Math.random()*240+100,phase:Math.random()*Math.PI*2,speed:Math.random()*.004+.001,green:Math.random()>.4});}
+function drawLeaf(x,y,size,rot,alpha){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.globalAlpha=alpha;ctx.beginPath();ctx.moveTo(0,-size);ctx.bezierCurveTo(size*.85,-size*.5,size*.85,size*.5,0,size);ctx.bezierCurveTo(-size*.85,size*.5,-size*.85,-size*.5,0,-size);ctx.fillStyle=`hsl(${280+Math.random()*20},52%,${20+Math.random()*10}%)`;ctx.fill();ctx.restore();}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);const bg=ctx.createRadialGradient(canvas.width/2,canvas.height*.6,0,canvas.width/2,canvas.height*.4,canvas.width);bg.addColorStop(0,'rgb(35,10,55)');bg.addColorStop(.45,'rgb(20,8,40)');bg.addColorStop(1,'rgb(8,3,20)');ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);orbs.forEach(o=>{o.phase+=o.speed;const px=o.x+Math.sin(o.phase)*70,py=o.y+Math.cos(o.phase*.7)*35,g=ctx.createRadialGradient(px,py,0,px,py,o.r);g.addColorStop(0,'rgba(170,70,255,0.12)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(px,py,o.r,o.r*.55,0,0,Math.PI*2);ctx.fill();});leaves.forEach(l=>{l.swing+=l.swingSpeed;l.x+=l.vx+Math.sin(l.swing)*.6;l.y+=l.vy;l.rot+=l.rotSpeed;if(l.y>canvas.height+30){l.y=-30;l.x=Math.random()*canvas.width;}drawLeaf(l.x,l.y,l.size,l.rot,l.alpha*Math.abs(Math.sin(l.swing*.5+1)));});fireflies.forEach(f=>{f.age++;f.x+=f.vx+Math.sin(f.age*.045)*.4;f.y+=f.vy+Math.cos(f.age*.032)*.25;if(f.y<-10){f.y=canvas.height+10;f.x=Math.random()*canvas.width;f.age=0;}if(f.x<-10)f.x=canvas.width+10;if(f.x>canvas.width+10)f.x=-10;const lr=(f.age%f.maxLife)/f.maxLife,alpha=lr<.1?lr*10:lr>.85?(1-lr)*6.7:1,blink=.3+.7*Math.abs(Math.sin(f.age*.065)),g=ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r*8);g.addColorStop(0,`hsla(${f.hue},100%,75%,${alpha*blink*.85})`);g.addColorStop(.25,`hsla(${f.hue},100%,65%,${alpha*blink*.35})`);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(f.x,f.y,f.r*8,0,Math.PI*2);ctx.fill();ctx.fillStyle=`hsla(${f.hue},100%,92%,${alpha*blink})`;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();});const tm=ctx.createLinearGradient(0,0,0,canvas.height*.2);tm.addColorStop(0,'rgba(25,10,40,0.97)');tm.addColorStop(1,'rgba(25,10,40,0)');ctx.fillStyle=tm;ctx.fillRect(0,0,canvas.width,canvas.height*.2);const bm=ctx.createLinearGradient(0,canvas.height*.62,0,canvas.height);bm.addColorStop(0,'rgba(25,10,40,0)');bm.addColorStop(1,'rgba(25,10,40,0.98)');ctx.fillStyle=bm;ctx.fillRect(0,canvas.height*.62,canvas.width,canvas.height*.38);requestAnimationFrame(animate);}
+animate();
+</script>
+
+</body></html>

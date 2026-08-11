@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gubzu — Price List</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+
+:root{
+  --bg:#08090b;
+  --panel:#111318;
+  --panel2:#151820;
+  --line:rgba(255,255,255,.09);
+  --text:#f2f2f0;
+  --muted:#90949e;
+  --lime:#c7ff54;
+  --violet:#9b7cff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:"DM Sans",sans-serif;
+  background:
+    radial-gradient(700px 420px at 5% -5%,rgba(155,124,255,.18),transparent 65%),
+    radial-gradient(650px 450px at 100% 30%,rgba(199,255,84,.10),transparent 65%),
+    linear-gradient(180deg,#08090b,#0b0c10 55%,#08090b);
+}
+body:after{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+}
+.wrap{width:min(900px,100%);margin:auto;padding:24px 18px 70px;position:relative}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:70px}
+.logo{font:700 18px "DM Sans";letter-spacing:-.4px}.logo b{color:var(--lime)}
+.badge{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:8px 12px;border-radius:999px;color:#aaaeb7;font-size:10px;letter-spacing:1.5px}
+.hero{margin-bottom:38px}
+.kicker{color:var(--lime);font-size:10px;font-weight:700;letter-spacing:2.5px;margin-bottom:14px}
+h1{font:600 clamp(45px,9vw,78px)/.94 "Playfair Display",serif;letter-spacing:-3px;margin:0}
+.hero p{color:var(--muted);font-size:13px;margin:17px 0 0;max-width:500px}
+.list{display:grid;gap:11px}
+.item{
+  display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:16px;
+  text-decoration:none;color:inherit;padding:17px 18px;
+  border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  backdrop-filter:blur(14px);
+  transition:.2s ease;
+}
+.item:hover{transform:translateY(-2px);border-color:rgba(199,255,84,.3);background:linear-gradient(135deg,rgba(199,255,84,.08),rgba(255,255,255,.025))}
+.num{
+  width:48px;height:48px;border-radius:15px;display:grid;place-items:center;
+  background:#191b22;border:1px solid var(--line);color:#858a94;font-size:12px;font-weight:700;
+}
+.name{font-weight:600;font-size:16px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:11px;margin-top:4px}
+.price{font:600 20px "Playfair Display";white-space:nowrap}
+.arrow{font-size:14px;color:var(--lime);margin-left:8px}
+.special{border-color:rgba(155,124,255,.24)}
+.special .num{background:linear-gradient(135deg,#33266a,#191b22);color:#d6cbff}
+.footer{display:flex;justify-content:space-between;margin-top:28px;color:#555b65;font-size:9px;letter-spacing:1.6px;text-transform:uppercase}
+@media(max-width:560px){
+  .wrap{padding:20px 14px 55px}.nav{margin-bottom:55px}
+  .item{grid-template-columns:45px 1fr auto;padding:15px 13px;border-radius:17px;gap:11px}
+  .num{width:43px;height:43px;border-radius:13px}
+  .name{font-size:14px}.sub{font-size:10px}.price{font-size:18px}
+  .arrow{display:none}.badge{font-size:9px;padding:7px 9px}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <nav class="nav">
+    <div class="logo">GUBZU <b>⚡</b></div>
+    <div class="badge">PRICE LIST</div>
+  </nav>
+
+  <header class="hero">
+    <div class="kicker">AVAILABLE COLLECTIONS</div>
+    <h1>Choose your<br>pack.</h1>
+    <p>Tap any item to contact us and place an order.</p>
+  </header>
+
+  <section class="list">
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">01</div><div><div class="name">125 GB</div><div class="sub">Starter pack</div></div>
+      <div class="price">$15 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">02</div><div><div class="name">275 GB</div><div class="sub">Standard pack</div></div>
+      <div class="price">$29 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">03</div><div><div class="name">635 GB</div><div class="sub">Extended pack</div></div>
+      <div class="price">$49 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">04</div><div><div class="name">2.1 TB</div><div class="sub">Full-size pack</div></div>
+      <div class="price">$125 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item special" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">05</div><div><div class="name">Random Pack</div><div class="sub">Up to 10 TB · subject to availability</div></div>
+      <div class="price">$33 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">06</div><div><div class="name">Creator Pack</div><div class="sub">Curated collection</div></div>
+      <div class="price">$45 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">07</div><div><div class="name">Media Pack</div><div class="sub">Curated collection</div></div>
+      <div class="price">$50 <span class="arrow">↗</span></div>
+    </a>
+    <a class="item special" href="https://t.me/gupzu" target="_blank" rel="noopener">
+      <div class="num">08</div><div><div class="name">Mix Pack</div><div class="sub">735 GB + 100 GB gift</div></div>
+      <div class="price">$75 <span class="arrow">↗</span></div>
+    </a>
+  </section>
+
+  <footer class="footer"><span>GUBZU</span><span>2026 · TAP TO ORDER</span></footer>
+</main>
+</body>
+</html>
